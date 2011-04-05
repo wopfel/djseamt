@@ -1,0 +1,35 @@
+================
+Project: DJSEAMT
+================
+
+About:
+  DJSEAMT is a Distributed Job Scheduling Environment And Management Tool.
+  There are two parts: one distributed piece of software (client) and a server component.
+
+Why?
+  I'd like to create a tool where I can collect the computers' data to one central place
+  and schedule jobs when they are powered on the next time.
+  Example: check what type of hard disks are installed
+  Another example: install vim-full the next time the computer is powered on
+
+How it should work some time (client):
+  1. Parse command line args
+  2. Read config file
+  3. <configdir>/id file missing? Generate one with a GUID, set creation date and time (timestamp)
+     Read <configdir>/id file
+  4. Handshake with server
+     http://.../hello.php
+  5. A job for me?
+     http://.../request-job.php
+  6. Feedback
+     http://.../feedback.php
+
+How it should work some time (server):
+  1. Wait for contact
+  2. Serve jobs, get feedback, store data
+
+License:
+  All files and/or data is released under GNU General Public License v2.0 (GPLv2)
+
+Copyright (C) 2011  Bernd Arnold
+
