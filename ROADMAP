@@ -1,0 +1,36 @@
+What plans do I have? 
+The roadmap of DJSEAMT
+
+
+Webserver stores data during handshake (hello.php)
+Data stored:
+- uuid
+- hostname
+- timestamp when uuid was generated
+- timestamp of first contact (never in the future)
+- timestamp of last contact (changed every time a handshake occurs)
+- client version of last contact
+
+
+Client holds more configuration files
+- all files stored in the client configuration directory
+- client chooses 'best' file
+- files have an expiration and/or begin date
+- failback to next 'best' config file when server cannot be reached
+
+
+Client receives new configuration files from server
+
+
+Job execution
+- client ask for a job
+- client executes job
+- client sends feedback about running/ended job
+
+
+Job scheduling
+- external program (server) provides job plans
+- webserver distributes jobs to clients
+
+
+Oh yes, a lot of work to do...
