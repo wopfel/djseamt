@@ -1,0 +1,8 @@
+# vi/vim swap files
+*.swp
+
+# my configuration directory for the client
+djseamt-clientdir/
+
+# my configuration file
+src-client/config-client

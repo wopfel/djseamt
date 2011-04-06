@@ -28,6 +28,17 @@ How it should work some time (server):
   1. Wait for contact
   2. Serve jobs, get feedback, store data
 
+Setup (so far):
+  1. Install dependencies for the client script (see "use ..." lines at the beginning) so it can be called without error messages from Perl
+  2. Copy config-client.sample to config-client (or something similar), edit the new file
+     Modify value of configdir, a readable/writeable directory for the user that runs the script
+     Modify contact_url to point to your webserver and path
+  3. Store content of src-web in the path you specified in the client
+  4. Run djseamt-client -c CONFIGFILE
+     An id file is created in the configdir
+     Client tries to contact the webserver
+     If everything works fine, you'll see some lines between "Response follows:" and "Response ends."
+
 License:
   All files and/or data is released under GNU General Public License v2.0 (GPLv2)
 

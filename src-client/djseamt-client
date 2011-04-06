@@ -1,0 +1,170 @@
+#!/usr/bin/perl
+
+# Copyright (C) 2011  Bernd Arnold - https://github.com/wopfel
+# Created 2011-04-05
+# Released under GNU General Public License version 2 (GPLv2)
+
+use strict;
+use warnings;
+use Getopt::Long;
+use Config::IniFiles;
+use UUID::Tiny;
+use LWP::UserAgent;
+use URI::Escape;
+use Sys::Hostname;
+
+my $CLIENT_VERSION = "0.0.0.1";
+
+my ( $help, $configfilename
+   );
+
+
+
+################################################################
+##
+##  Process command line arguments
+##
+################################################################
+
+my $arg_status = GetOptions(
+                             "h"   => \$help,           "help" => \$help,
+                             "c=s" => \$configfilename, "configfile=s" => \$configfilename,
+                           );
+
+print_syntax() if $help;
+print_syntax( "Missing config file" )  unless defined $configfilename;
+
+
+################################################################
+##
+##  Read config file
+##
+################################################################
+
+print "Reading config file '$configfilename'...\n";
+
+my $cfg = new Config::IniFiles( -file => $configfilename );
+
+if ( ! defined $cfg ) { print "Error loading config file.\n"; exit 1; }
+
+my $configdir = $cfg->val( 'client', 'configdir' );
+
+
+
+
+################################################################
+##
+##  Setting up configuration
+##
+################################################################
+
+print "Setting up configuration...\n";
+
+if ( ! -e "$configdir/id" ) {
+
+    print "Generating new id...\n";
+
+    my $new_uuid = create_UUID_as_string();
+
+    open IDFILE, ">", "$configdir/id"  or  die "Cannot create id file '$configdir/id'";
+    print IDFILE "[id]\n";
+    print IDFILE "\tuuid = $new_uuid\n";
+    print IDFILE "\ttimestamp_generated = ", time, "\n";
+    close IDFILE;
+
+}
+
+my $id_cfg = new Config::IniFiles( -file => "$configdir/id" );
+
+if ( ! defined $id_cfg ) { print "Error loading id config file.\n"; exit 1; }
+
+my $client_id = $id_cfg->val( 'id', 'uuid' );
+
+print "Using client uuid '$client_id'.\n";
+
+
+
+
+################################################################
+##
+##  Handshake with server
+##
+################################################################
+
+print "Contacting server...\n";
+
+my %postcontent;
+$postcontent{'id'} = $client_id;
+$postcontent{'id_generated'} = $id_cfg->val( 'id', 'timestamp_generated' );
+$postcontent{'client_version'} = $CLIENT_VERSION;
+$postcontent{'hostname'} = hostname;
+
+my $ua = LWP::UserAgent->new;
+$ua->agent( "djseamt-client/$CLIENT_VERSION" );
+
+my $request_url = $cfg->val( 'client', 'contact_url' ) . "/hello.php";
+
+# Setup request, encode POST data
+my $req = HTTP::Request->new( POST => $request_url );
+$req->content_type( 'application/x-www-form-urlencoded' );
+$postcontent{$_} = uri_escape( $postcontent{$_} ) foreach keys %postcontent;
+my @postcontent;
+push @postcontent, "$_=$postcontent{$_}" foreach keys %postcontent;
+$req->content( join  "&", @postcontent );
+
+# Send HTTP POST request
+my $response = $ua->request( $req );
+
+if ( $response->is_success ) {
+    print "Successful handshake with server.\n";
+    print "Response follows:\n";
+    foreach ( split /\n/, $response->content ) {
+        print "  ", $_, "\n";
+    }
+    print "Response ends.\n";
+} else {
+    print "Error communicating with server, '$request_url'.\n";
+}
+
+
+
+
+################################################################
+##
+##  Program ends
+##
+################################################################
+
+print "Terminating client...\n";
+
+exit 0;
+
+
+
+
+################################################################
+##
+##  Sub: Print syntax help
+##
+################################################################
+
+sub print_syntax {
+
+    my $error = shift || "unknown";
+
+    print "Error: $error.\n"  unless $help;
+    print "DJSEAMT client (https://github.com/wopfel/djseamt)\n";
+    print "Copyright (C) 2011 Bernd Arnold\n\n";
+
+    print "Distributed Job Scheduling Environment And Management Tool\n\n";
+
+    print "Syntax:\n";
+    print "          djseamt-client -c <configfile>\n";
+    print "Options:\n";
+    print "  --configfile NAME, -c      use NAME as config file\n";
+    print "  --help, -h                 show this help\n";
+
+    exit 1;
+
+}
+
