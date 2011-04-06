@@ -33,4 +33,9 @@ Job scheduling
 - webserver distributes jobs to clients
 
 
+Encrypted data transfer between client and webserver
+- using HTTPS
+- using self-made certificates
+
+
 Oh yes, a lot of work to do...
