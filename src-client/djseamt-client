@@ -49,6 +49,9 @@ if ( ! defined $master_cfg ) { print "Error loading master config file.\n"; exit
 
 my $configdir = $master_cfg->val( 'client', 'configdir' );
 
+# There's no sense proceeding when the directory doesn't exist
+die "Configuration directory doesn't exist" unless -d $configdir;
+
 
 
 
