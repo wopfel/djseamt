@@ -37,17 +37,17 @@ print_syntax( "Missing config file" )  unless defined $configfilename;
 
 ################################################################
 ##
-##  Read config file
+##  Read master config file
 ##
 ################################################################
 
-print "Reading config file '$configfilename'...\n";
+print "Reading master config file '$configfilename'...\n";
 
-my $cfg = new Config::IniFiles( -file => $configfilename );
+my $master_cfg = new Config::IniFiles( -file => $configfilename );
 
-if ( ! defined $cfg ) { print "Error loading config file.\n"; exit 1; }
+if ( ! defined $master_cfg ) { print "Error loading master config file.\n"; exit 1; }
 
-my $configdir = $cfg->val( 'client', 'configdir' );
+my $configdir = $master_cfg->val( 'client', 'configdir' );
 
 
 
@@ -102,7 +102,8 @@ $postcontent{'hostname'} = hostname;
 my $ua = LWP::UserAgent->new;
 $ua->agent( "djseamt-client/$CLIENT_VERSION" );
 
-my $request_url = $cfg->val( 'client', 'contact_url' ) . "/hello.php";
+# TODO: Shouldn't be $master_cfg but a sub config variable
+my $request_url = $master_cfg->val( 'client', 'contact_url' ) . "/hello.php";
 
 # Setup request, encode POST data
 my $req = HTTP::Request->new( POST => $request_url );
