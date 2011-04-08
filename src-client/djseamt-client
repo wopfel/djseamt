@@ -85,49 +85,55 @@ my $client_id = $id_cfg->val( 'id', 'uuid' );
 
 print "Using client uuid '$client_id'.\n";
 
+handshake();
+
 
 
 
 ################################################################
 ##
-##  Handshake with server
+##  Sub: Handshake with server
 ##
 ################################################################
 
-print "Contacting server...\n";
+sub handshake {
 
-my %postcontent;
-$postcontent{'id'} = $client_id;
-$postcontent{'id_generated'} = $id_cfg->val( 'id', 'timestamp_generated' );
-$postcontent{'client_version'} = $CLIENT_VERSION;
-$postcontent{'hostname'} = hostname;
+    print "Contacting server...\n";
 
-my $ua = LWP::UserAgent->new;
-$ua->agent( "djseamt-client/$CLIENT_VERSION" );
+    my %postcontent;
+    $postcontent{'id'} = $client_id;
+    $postcontent{'id_generated'} = $id_cfg->val( 'id', 'timestamp_generated' );
+    $postcontent{'client_version'} = $CLIENT_VERSION;
+    $postcontent{'hostname'} = hostname;
 
-# TODO: Shouldn't be $master_cfg but a sub config variable
-my $request_url = $master_cfg->val( 'client', 'contact_url' ) . "/hello.php";
+    my $ua = LWP::UserAgent->new;
+    $ua->agent( "djseamt-client/$CLIENT_VERSION" );
 
-# Setup request, encode POST data
-my $req = HTTP::Request->new( POST => $request_url );
-$req->content_type( 'application/x-www-form-urlencoded' );
-$postcontent{$_} = uri_escape( $postcontent{$_} ) foreach keys %postcontent;
-my @postcontent;
-push @postcontent, "$_=$postcontent{$_}" foreach keys %postcontent;
-$req->content( join  "&", @postcontent );
+    # TODO: Shouldn't be $master_cfg but a sub config variable
+    my $request_url = $master_cfg->val( 'client', 'contact_url' ) . "/hello.php";
 
-# Send HTTP POST request
-my $response = $ua->request( $req );
+    # Setup request, encode POST data
+    my $req = HTTP::Request->new( POST => $request_url );
+    $req->content_type( 'application/x-www-form-urlencoded' );
+    $postcontent{$_} = uri_escape( $postcontent{$_} ) foreach keys %postcontent;
+    my @postcontent;
+    push @postcontent, "$_=$postcontent{$_}" foreach keys %postcontent;
+    $req->content( join  "&", @postcontent );
 
-if ( $response->is_success ) {
-    print "Successful handshake with server.\n";
-    print "Response follows:\n";
-    foreach ( split /\n/, $response->content ) {
-        print "  ", $_, "\n";
+    # Send HTTP POST request
+    my $response = $ua->request( $req );
+
+    if ( $response->is_success ) {
+        print "Successful handshake with server.\n";
+        print "Response follows:\n";
+        foreach ( split /\n/, $response->content ) {
+            print "  ", $_, "\n";
+        }
+        print "Response ends.\n";
+    } else {
+        print "Error communicating with server, '$request_url'.\n";
     }
-    print "Response ends.\n";
-} else {
-    print "Error communicating with server, '$request_url'.\n";
+
 }
 
 
