@@ -85,7 +85,65 @@ my $client_id = $id_cfg->val( 'id', 'uuid' );
 
 print "Using client uuid '$client_id'.\n";
 
-handshake();
+
+
+
+################################################################
+##
+##  Searching for sub configuration files
+##
+################################################################
+
+print "Searching for sub configuration files in '$configdir'...\n";
+
+my @subconfig_names;
+
+opendir DIR, $configdir;
+
+for ( readdir( DIR ) ) {
+
+    # Only accept this pattern: file name begins with 'subconfig-', followed by a 4 digit number
+    next unless $_ =~ /^subconfig-\d{4}/;
+
+    push @subconfig_names, $_;
+
+}
+
+closedir DIR;
+
+print "Found ", scalar(@subconfig_names), " subconfig files.\n";
+
+die "Need at least one subconfig file to proceed" unless scalar @subconfig_names >= 1;
+
+my %subconfig_priority;
+
+for my $subname ( @subconfig_names ) {
+
+    my $sub_cfg = new Config::IniFiles( -file => "$configdir/$subname" );
+
+    if ( ! defined $sub_cfg ) { warn "Error loading subconfig file '$subname'"; next; }
+
+    my $priority = $sub_cfg->val( 'subconfig', 'priority' );
+
+    print "Using subconfig file '$subname', priority $priority.\n";
+
+    # Ignore subconfig files with priority = 0
+    $subconfig_priority{$subname} = $priority if $priority > 0;
+
+}
+
+# The item with the highest value in priority is at the end of the array
+my @sorted_subconfig = sort { $subconfig_priority{$a} <=> $subconfig_priority{$b} } keys %subconfig_priority;
+
+my $use_subconfig_name = pop @sorted_subconfig;
+
+print "Trying subconfig file '$use_subconfig_name' now.\n";
+
+if ( handshake( $use_subconfig_name ) ) {
+    print "Successful handshake.\n";
+} else  {
+    print "Error: unsuccessful handshake.\n";
+}
 
 
 
@@ -98,7 +156,13 @@ handshake();
 
 sub handshake {
 
-    print "Contacting server...\n";
+    my $subconfig_name = shift;
+
+    return 0 unless defined $subconfig_name;
+
+    my $sub_cfg = new Config::IniFiles( -file => "$configdir/$subconfig_name" );
+
+    if ( ! defined $sub_cfg ) { warn "Error loading subconfig file '$subconfig_name'"; return 0; }
 
     my %postcontent;
     $postcontent{'id'} = $client_id;
@@ -109,8 +173,7 @@ sub handshake {
     my $ua = LWP::UserAgent->new;
     $ua->agent( "djseamt-client/$CLIENT_VERSION" );
 
-    # TODO: Shouldn't be $master_cfg but a sub config variable
-    my $request_url = $master_cfg->val( 'client', 'contact_url' ) . "/hello.php";
+    my $request_url = $sub_cfg->val( 'subconfig', 'contact_url' ) . "/hello.php";
 
     # Setup request, encode POST data
     my $req = HTTP::Request->new( POST => $request_url );
@@ -119,6 +182,8 @@ sub handshake {
     my @postcontent;
     push @postcontent, "$_=$postcontent{$_}" foreach keys %postcontent;
     $req->content( join  "&", @postcontent );
+
+    print "Trying to contact server '$request_url'...\n";
 
     # Send HTTP POST request
     my $response = $ua->request( $req );
@@ -130,8 +195,10 @@ sub handshake {
             print "  ", $_, "\n";
         }
         print "Response ends.\n";
+        return 1;
     } else {
         print "Error communicating with server, '$request_url'.\n";
+        return 0;
     }
 
 }

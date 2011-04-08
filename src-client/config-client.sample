@@ -1,3 +1,2 @@
 [client]
 	configdir = djseamt-clientdir/
-        contact_url = http://servername/djseamt/
