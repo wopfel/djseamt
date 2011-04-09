@@ -32,6 +32,14 @@ if ( ! preg_match( '/^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+$/',
     exit;
 }
 
+# Only POST accepted
+if ( $_SERVER['REQUEST_METHOD'] != "POST" ) {
+    # TODO
+    print "ERROR";
+    print "Request method mismatch.";
+    exit;
+}
+
 
 require( "config.php" );
 require( "mysql.php" );
