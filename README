@@ -33,12 +33,15 @@ Setup (so far):
      At least (names for Ubuntu 10.10): libuuid-tiny-perl libconfig-inifiles-perl
   2. Copy config-client.sample to config-client (or something similar), edit the new file
      Modify value of configdir, a readable/writeable directory for the user that runs the script
-     Modify contact_url to point to your webserver and path
+     Copy subconfig.sample to subconfig-0001-test and place the file in the specified configdir
+     Modify contact_url to point to your webserver and path in file subconfig-0001-test
   3. Store content of src-web in the path you specified in the client
-  4. Run djseamt-client -c CONFIGFILE
+  4. Create a MySQL database, table (see file tools/mysql-database.sql) and user with password, grant access to the database
+  5. Copy config-sample.php to config.php on your webserver and adjust config.php
+  6. Run djseamt-client -c CONFIGFILE
      An id file is created in the configdir
      Client tries to contact the webserver
-     If everything works fine, you'll see some lines between "Response follows:" and "Response ends."
+     If everything works fine, you'll see some lines between "Response follows:" and "Response ends." and an entry in the database table is created
 
 License:
   All files and/or data is released under GNU General Public License v2.0 (GPLv2)
