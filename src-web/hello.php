@@ -72,9 +72,10 @@ if ( mysql_num_rows( $result ) < 1 ) {
 
 
 # Update existing entry
-$query = sprintf( "UPDATE client_list SET recent_contact=CURRENT_TIMESTAMP, recent_hostname='%s', recent_version='%s' WHERE uuid='%s' LIMIT 1",
+$query = sprintf( "UPDATE client_list SET recent_contact=CURRENT_TIMESTAMP, recent_hostname='%s', recent_version='%s', recent_ipaddr='%s' WHERE uuid='%s' LIMIT 1",
                                mysql_real_escape_string( $_POST["hostname"] ),
                                mysql_real_escape_string( $_POST["client_version"] ),
+                               mysql_real_escape_string( $_SERVER["REMOTE_ADDR"] ),
                                mysql_real_escape_string( $_POST["id"] )
                 );
 if ( ! mysql_query( $query ) ) {

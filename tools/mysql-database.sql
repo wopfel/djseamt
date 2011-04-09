@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS `client_list` (
   `recent_contact` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `recent_hostname` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
   `recent_version` varchar(12) COLLATE utf8_unicode_ci NOT NULL,
+  `recent_ipaddr` varchar(39) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uuid` (`uuid`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
