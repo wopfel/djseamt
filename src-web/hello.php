@@ -1,5 +1,38 @@
 <?php
 
+# Some basic checking
+if ( ! preg_match( '/^[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}$/', $_POST["id"] ) ) {
+    # TODO
+    print "ERROR";
+    print "UUID format mismatch.";
+    exit;
+}
+
+# Only lowercase characters are allowed
+if ( preg_match( '/[[:upper:]]/', $_POST["id"] ) ) {
+    # TODO
+    print "ERROR";
+    print "UUID case mismatch.";
+    exit;
+}
+
+# Hostname check
+if ( ! preg_match( '/^[[:alnum:]-]+$/', $_POST["hostname"] ) ) {
+    # TODO
+    print "ERROR";
+    print "Hostname format mismatch.";
+    exit;
+}
+
+# Version string check
+if ( ! preg_match( '/^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+$/', $_POST["client_version"] ) ) {
+    # TODO
+    print "ERROR";
+    print "Client version format mismatch.";
+    exit;
+}
+
+
 require( "config.php" );
 require( "mysql.php" );
 
