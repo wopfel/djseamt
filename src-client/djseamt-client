@@ -155,15 +155,27 @@ for my $subname ( @subconfig_names ) {
 # The item with the highest value in priority is at the end of the array
 my @sorted_subconfig = sort { $subconfig_priority{$a} <=> $subconfig_priority{$b} } keys %subconfig_priority;
 
-my $use_subconfig_name = pop @sorted_subconfig;
+# Stores the subconfig filename which leads to a successful handshake
+my $active_subconfig_name;
 
-print "Trying subconfig file '$use_subconfig_name' now.\n";
+# Find a suitable subconfig file
+for my $use_subconfig_name ( reverse @sorted_subconfig ) {
 
-if ( handshake( $use_subconfig_name ) ) {
-    print "Successful handshake.\n";
-} else  {
-    print "Error: unsuccessful handshake.\n";
+    print "Trying subconfig file '$use_subconfig_name' now.\n";
+
+    if ( handshake( $use_subconfig_name ) ) {
+        print "Successful handshake.\n";
+        $active_subconfig_name = $use_subconfig_name;
+        last;
+    } else  {
+        warn "Warning: unsuccessful handshake.\n";
+    }
+
 }
+
+die "Error: no connection could be established - terminating" unless defined $active_subconfig_name;
+
+print "Using subconfig file '$active_subconfig_name' now.\n";
 
 
 
