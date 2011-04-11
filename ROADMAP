@@ -7,7 +7,7 @@ Data stored:
 - uuid
 - hostname
 - timestamp when uuid was generated
-- timestamp of first contact (never in the future)
+- timestamp of first contact (never changed in the future)
 - timestamp of last contact (changed every time a handshake occurs)
 - client version of last contact
 
