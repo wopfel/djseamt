@@ -4,19 +4,25 @@ The roadmap of DJSEAMT
 
 Webserver stores data during handshake (hello.php)
 Data stored:
-- uuid
-- hostname
+- uuid [done]
+- hostname [done]
 - timestamp when uuid was generated
-- timestamp of first contact (never changed in the future)
-- timestamp of last contact (changed every time a handshake occurs)
-- client version of last contact
+- timestamp of first contact (never changed in the future) [done]
+- timestamp of last contact (changed every time a handshake occurs) [done]
+- client version of last contact [done]
 
 
 Client holds more configuration files
-- all files stored in the client configuration directory
+- all files stored in the client configuration directory [done]
 - client chooses 'best' file
 - files have an expiration and/or begin date
-- failback to next 'best' config file when server cannot be reached
+- failback to next 'best' config file when server cannot be reached [done: sorted by priority value]
+
+
+Client writes log file
+- verbosity can be set
+- destination set in master configuration file
+- describe method of log rotation (done by client or logrotate daemon?)
 
 
 Client receives new configuration files from server
