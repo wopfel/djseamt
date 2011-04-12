@@ -19,6 +19,12 @@ Client holds more configuration files
 - failback to next 'best' config file when server cannot be reached [done: sorted by priority value]
 
 
+Client runs as daemon
+- unless requested by command line option (--foreground or something)
+- regular handshake (specified in master config file, overwritten by subconfig file, overwritten by server option)
+- trying to contact server for handshake in an endless loop
+
+
 Client writes log file
 - verbosity can be set
 - destination set in master configuration file
@@ -26,6 +32,12 @@ Client writes log file
 
 
 Client receives new configuration files from server
+- server offers list of subconfig files
+- client requests missing subconfig files
+
+
+Exchanged information
+- each client holds its own properties file, which is transferred to the server and stored (could be useful for queries)
 
 
 Job execution
