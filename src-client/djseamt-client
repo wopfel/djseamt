@@ -182,7 +182,9 @@ print "Using subconfig file '$active_subconfig_name' now.\n";
 
 ################################################################
 ##
-##  Sub: Handshake with server
+##  Sub: Handshake with server using specified subconfig filename
+##
+##  Parameter: subconfig filename as a string
 ##
 ################################################################
 
@@ -223,6 +225,7 @@ sub handshake {
     if ( $response->is_success ) {
         print "Successful handshake with server.\n";
         print "Response follows:\n";
+        # TODO: do something useful according to response
         foreach ( split /\n/, $response->content ) {
             print "  ", $_, "\n";
         }
@@ -254,6 +257,8 @@ exit 0;
 ################################################################
 ##
 ##  Sub: Print syntax help
+##
+##  Parameter: Error message (optional, but appreciated)
 ##
 ################################################################
 
