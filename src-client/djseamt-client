@@ -280,8 +280,8 @@ sub print_syntax {
     print "Syntax:\n";
     print "          djseamt-client -c <configfile>\n";
     print "Options:\n";
-    print "  --configfile NAME, -c      use NAME as config file\n";
-    print "  --help, -h                 show this help\n";
+    print "  -c, --configfile=NAME     use NAME as config file\n";
+    print "  -h, --help                show this help\n";
 
     exit 1;
 
