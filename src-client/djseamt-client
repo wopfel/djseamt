@@ -47,7 +47,7 @@ my ( $help, $configfilename
 ################################################################
 
 my $arg_status = GetOptions(
-                             "h"   => \$help,           "help" => \$help,
+                             "h"   => \$help,           "help"         => \$help,
                              "c=s" => \$configfilename, "configfile=s" => \$configfilename,
                            );
 
@@ -182,6 +182,19 @@ print "Using subconfig file '$active_subconfig_name' now.\n";
 
 ################################################################
 ##
+##  Program ends
+##
+################################################################
+
+print "Terminating client...\n";
+
+exit 0;
+
+
+
+
+################################################################
+##
 ##  Sub: Handshake with server using specified subconfig filename
 ##
 ##  Parameter: subconfig filename as a string
@@ -243,19 +256,6 @@ sub handshake {
 
 ################################################################
 ##
-##  Program ends
-##
-################################################################
-
-print "Terminating client...\n";
-
-exit 0;
-
-
-
-
-################################################################
-##
 ##  Sub: Print syntax help
 ##
 ##  Parameter: Error message (optional, but appreciated)
@@ -267,8 +267,10 @@ sub print_syntax {
     my $error = shift || "unknown";
 
     print "Error: $error.\n"  unless $help;
+
     print "DJSEAMT client (https://github.com/wopfel/djseamt)\n";
     print "Copyright (C) 2011 Bernd Arnold\n\n";
+
     print "DJSEAMT comes with ABSOLUTELY NO WARRANTY; for details see LICENSE file.\n";
     print "This is free software, and you are welcome to redistribute it\n";
     print "under certain conditions; see LICENSE file for details.\n\n";
