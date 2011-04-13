@@ -24,6 +24,11 @@
 ##############################################################################
 
 
+require( "reply-packet.inc.php" );
+
+$rp = new ReplyPacket;
+
+
 # Some basic checking
 if ( ! preg_match( '/^[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}$/', $_POST["id"] ) ) {
     # TODO
@@ -99,7 +104,7 @@ if ( mysql_num_rows( $result ) < 1 ) {
         print "ERROR";
         print mysql_error();
     }
-    $info .= "<newentry />";
+    $rp->setInfo( "handshake_newentry", "true" );
 }
 
 
@@ -116,9 +121,14 @@ if ( ! mysql_query( $query ) ) {
     print mysql_error();
 }
 
-$info .= "<updatedentry />";
+$rp->setInfo( "handshake_updatedentry", "true" );
 
 
+$rp->setStatus( "OK" );
+$rp->setMessageText( "Successful handshake" );
+print $rp->getXmlString();
+
+exit;
 print "OK.\n";
 print "Your uuid: " . $_POST["id"] . "\n";
 # TODO: Define and use a default message protocol

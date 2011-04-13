@@ -32,6 +32,8 @@ use UUID::Tiny;
 use LWP::UserAgent;
 use URI::Escape;
 use Sys::Hostname;
+use XML::Simple;
+use Data::Dumper;
 
 my $CLIENT_VERSION = "0.0.0.1";
 
@@ -242,6 +244,8 @@ sub handshake {
         foreach ( split /\n/, $response->content ) {
             print "  ", $_, "\n";
         }
+        my $answer = XMLin( $response->content );
+        print Dumper( $answer );
         print "Response ends.\n";
         return 1;
     } else {
