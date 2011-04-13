@@ -41,7 +41,7 @@ Exchanged information
 
 
 Job execution
-- client ask for a job
+- client asks for a job
 - client executes job
 - client sends feedback about running/ended job
 
