@@ -4,5 +4,6 @@
 # my configuration directory for the client
 djseamt-clientdir/
 
-# my configuration file
+# my configuration files
 src-client/config-client
+src-web/config.php
