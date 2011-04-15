@@ -70,11 +70,13 @@ class ReplyPacket {
         # TODO: Encode to Xml standard
         $str[] = "<message>$this->message_text</message>";
         $str[] = "<sender typ='djseamt-server' version='0.0.0.1' />";  # TODO: version string should be a global variable
-        $str[] = "<infos>";
-        foreach ( $this->infos as $info_idx => $info_val ) {
-            $str[] = "<$info_idx>$info_val</$info_idx>"; # TODO: Encode to Xml standard
+        if ( count( $this->infos ) > 0 ) {
+            $str[] = "<infos>";
+            foreach ( $this->infos as $info_idx => $info_val ) {
+                $str[] = "<$info_idx>$info_val</$info_idx>"; # TODO: Encode to Xml standard
+            }
+            $str[] = "</infos>";
         }
-        $str[] = "</infos>";
         $str[] = "</reply>";
         $str[] = "";  # So we get a newline char at the end
 
