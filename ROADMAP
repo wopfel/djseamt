@@ -14,9 +14,10 @@ Data stored:
 
 Client holds more configuration files
 - all files stored in the client configuration directory [done]
-- client chooses 'best' file
+- client chooses 'best' file [done: highest priority value]
 - files have an expiration and/or begin date
 - failback to next 'best' config file when server cannot be reached [done: sorted by priority value]
+- configs having the same priority value are chosen randomly (load balancing)
 
 
 Client runs as daemon
@@ -34,6 +35,7 @@ Client writes log file
 Client receives new configuration files from server
 - server offers list of subconfig files
 - client requests missing subconfig files
+- orphaned subconfig files are deleted after x days (requires that the client tracks the last successful-handshake date of each file)
 
 
 Exchanged information
@@ -49,6 +51,12 @@ Job execution
 Job scheduling
 - external program (server) provides job plans
 - webserver distributes jobs to clients
+- status of a job is 'waiting', 
+  'checking' when webserver checks if it's suitable for the client, prevents more webservers from checking the same item (locking),
+  'distributed' when job was sent to the client,
+  'denied' when client cannot run that job,
+  'running' when client gives information about running jobs,
+  'finished' when client notifies about a finished job
 
 
 Encrypted data transfer between client and webserver
