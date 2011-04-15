@@ -25,6 +25,7 @@
 
 
 # A class handling the reply to the client
+# Usage: create an instance, set data and send return value of getXmlString() to client
 
 class ReplyPacket {
 
@@ -32,18 +33,34 @@ class ReplyPacket {
     var $message_text;
     var $infos = array();
 
+    /**
+      * Set the status of this reply packet
+      */
     function setStatus( $newStatus ) {
         $this->status = $newStatus;
     }
 
+    /**
+      * Set the message text of this reply packet
+      */
     function setMessageText( $newMsg ) {
         $this->message_text = $newMsg;
     }
 
+    /**
+      * Set informational data of this reply packet
+      *
+      * Every index=value item is generated as <infos><index>value</index>...</infos>
+      */
     function setInfo( $newInfoIndex, $newInfoValue ) {
         $this->infos[ $newInfoIndex ] = $newInfoValue;
     }
 
+    /**
+      * Get the XML string of this reply packet
+      *
+      * The string can then be passed to the client
+      */
     function getXmlString() {
         $str = array();
         $str[] = "<reply>";
