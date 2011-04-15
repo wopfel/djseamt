@@ -64,6 +64,7 @@ class ReplyPacket {
     function getXmlString() {
         $str = array();
         $str[] = "<reply>";
+        $str[] = "<protocol version='0' />";  # TODO: should be at least 1, and it should be a global variable, and it should be checked by the client
         # TODO: Encode to Xml standard
         $str[] = "<status>$this->status</status>";
         # TODO: Encode to Xml standard
