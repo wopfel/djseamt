@@ -31,41 +31,41 @@ $rp = new ReplyPacket;
 
 # Some basic checking
 if ( ! preg_match( '/^[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}$/', $_POST["id"] ) ) {
-    # TODO
-    print "ERROR";
-    print "UUID format mismatch.";
+    $rp->setStatus( "ERROR" );
+    $rp->setMessageText( "UUID format mismatch" );
+    print $rp->getXmlString();
     exit;
 }
 
 # Only lowercase characters are allowed
 if ( preg_match( '/[[:upper:]]/', $_POST["id"] ) ) {
-    # TODO
-    print "ERROR";
-    print "UUID case mismatch.";
+    $rp->setStatus( "ERROR" );
+    $rp->setMessageText( "UUID case mismatch" );
+    print $rp->getXmlString();
     exit;
 }
 
 # Hostname check
 if ( ! preg_match( '/^[[:alnum:]-]+$/', $_POST["hostname"] ) ) {
-    # TODO
-    print "ERROR";
-    print "Hostname format mismatch.";
+    $rp->setStatus( "ERROR" );
+    $rp->setMessageText( "Hostname format mismatch" );
+    print $rp->getXmlString();
     exit;
 }
 
 # Version string check
 if ( ! preg_match( '/^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+$/', $_POST["client_version"] ) ) {
-    # TODO
-    print "ERROR";
-    print "Client version format mismatch.";
+    $rp->setStatus( "ERROR" );
+    $rp->setMessageText( "Client version format mismatch" );
+    print $rp->getXmlString();
     exit;
 }
 
 # Only POST accepted
 if ( $_SERVER['REQUEST_METHOD'] != "POST" ) {
-    # TODO
-    print "ERROR";
-    print "Request method mismatch.";
+    $rp->setStatus( "ERROR" );
+    $rp->setMessageText( "Request method mismatch" );
+    print $rp->getXmlString();
     exit;
 }
 
@@ -74,9 +74,10 @@ require( "config.php" );
 require( "mysql.php" );
 
 if ( ! mysql_establish() ) {
-    # TODO
-    print "ERROR";
-    print mysql_error();
+    $rp->setStatus( "ERROR" );
+    $rp->setMessageText( "Database error: " . mysql_errno() );
+    print $rp->getXmlString();
+    exit;
 }
 
 $query = sprintf( "SELECT * FROM client_list WHERE uuid='%s'",
@@ -86,9 +87,10 @@ $query = sprintf( "SELECT * FROM client_list WHERE uuid='%s'",
 $result = mysql_query( $query );
 
 if ( ! $result ) {
-    # TODO 
-    print "ERROR";
-    print mysql_error();
+    $rp->setStatus( "ERROR" );
+    $rp->setMessageText( "Database error: " . mysql_errno() );
+    print $rp->getXmlString();
+    exit;
 }   
 
 $info = "";
@@ -100,9 +102,10 @@ if ( mysql_num_rows( $result ) < 1 ) {
                                    mysql_real_escape_string( $_POST["id"] )
                     );
     if ( ! mysql_query( $query ) ) {
-        # TODO
-        print "ERROR";
-        print mysql_error();
+        $rp->setStatus( "ERROR" );
+        $rp->setMessageText( "Database error: " . mysql_errno() );
+        print $rp->getXmlString();
+        exit;
     }
     $rp->setInfo( "handshake_newentry", "true" );
 }
@@ -116,9 +119,10 @@ $query = sprintf( "UPDATE client_list SET recent_contact=CURRENT_TIMESTAMP, rece
                                mysql_real_escape_string( $_POST["id"] )
                 );
 if ( ! mysql_query( $query ) ) {
-    # TODO
-    print "ERROR";
-    print mysql_error();
+    $rp->setStatus( "ERROR" );
+    $rp->setMessageText( "Database error: " . mysql_errno() );
+    print $rp->getXmlString();
+    exit;
 }
 
 $rp->setInfo( "handshake_updatedentry", "true" );
