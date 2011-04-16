@@ -266,12 +266,6 @@ sub handshake {
     }
 
     print "Successful connection with server.\n";
-    print "Response follows:\n";
-    # TODO: don't output this unless debug mode is enabled
-    foreach ( split /\n/, $response->content ) {
-        print "  ", $_, "\n";
-    }
-    print "Response ends.\n";
 
     my $answer;
     # Using eval, so script doesn't die when invalid data is received

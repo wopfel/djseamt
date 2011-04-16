@@ -41,7 +41,7 @@ Setup (so far):
   6. Run djseamt-client -c CONFIGFILE
      An id file is created in the configdir
      Client tries to contact the webserver
-     If everything works fine, you'll see some lines between "Response follows:" and "Response ends." and an entry in the database table is created
+     If everything works fine, you'll see "Successful handshake" and an entry in the database table is created
 
 License:
   All files and/or data is released under GNU General Public License v2.0 (GPLv2)
