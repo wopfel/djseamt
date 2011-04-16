@@ -179,6 +179,13 @@ for my $use_subconfig_name ( reverse @sorted_subconfig ) {
             print "Error: invalid XML data received.\n";
             next;
         }
+        # Check protocol version
+        my $protocol_version = $answer->{protocol}->{version};
+        if ( $protocol_version !~ /^\d+$/ ) {
+            print "Error: invalid protocol version.\n";
+            next;
+        }
+
         print Dumper( $answer );
         $active_subconfig_name = $use_subconfig_name;
         last;
