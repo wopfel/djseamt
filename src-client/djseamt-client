@@ -300,10 +300,12 @@ sub handshake {
 
     print "Successful handshake.\n";
     print Dumper( $answer );
-    $active_subconfig_name = $subconfig_name;
     $last_successful_handshake_timestamp = time;
 
-    print "Using subconfig file '$active_subconfig_name' now.\n";
+    if ( $subconfig_name ne $active_subconfig_name ) {
+        $active_subconfig_name = $subconfig_name;
+        print "Using subconfig file '$active_subconfig_name' now.\n";
+    }
 
     return 1;
 
