@@ -170,7 +170,6 @@ for my $use_subconfig_name ( reverse @sorted_subconfig ) {
     if ( ! defined $hs_response ) {
         warn "Warning: unsuccessful handshake.\n";
     } else  {
-        print "Successful handshake.\n";
         my $answer;
         # Using eval, so script doesn't die when invalid data is received
         eval { $answer = XMLin( $hs_response ) };
@@ -185,7 +184,19 @@ for my $use_subconfig_name ( reverse @sorted_subconfig ) {
             print "Error: invalid protocol version.\n";
             next;
         }
+        # TODO: validate other fields of repsonse too
 
+        my $status = $answer->{status};
+
+        print "Received $status answer from webserver '$answer->{sender}->{typ}/$answer->{sender}->{version}'.\n";
+
+        # Don't use this subconfig file when webserver didn't give as an OK message
+        if ( $status ne "OK" ) {
+            print "Error: webserver reported error.\n";
+            next;
+        }
+
+        print "Successful handshake.\n";
         print Dumper( $answer );
         $active_subconfig_name = $use_subconfig_name;
         last;
