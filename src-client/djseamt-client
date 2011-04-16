@@ -281,6 +281,11 @@ sub handshake {
         print "Error: invalid protocol version.\n";
         return undef;
     }
+    # Check origin
+    if ( $answer->{sender}->{module} ne "hello" ) {
+        print "Error: invalid module origin.\n";
+        return undef;
+    }
     # TODO: validate other fields of repsonse too
 
     my $status = $answer->{status};

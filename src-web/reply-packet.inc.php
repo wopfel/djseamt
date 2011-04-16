@@ -30,6 +30,7 @@
 class ReplyPacket {
 
     var $status = "UNKNOWN";
+    var $module = "UNKNOWN";
     var $message_text;
     var $infos = array();
 
@@ -38,6 +39,13 @@ class ReplyPacket {
       */
     function setStatus( $newStatus ) {
         $this->status = $newStatus;
+    }
+
+    /**
+      * Set the module name (origin) of this reply packet
+      */
+    function setModule( $newModule ) {
+        $this->module = $newModule;
     }
 
     /**
@@ -69,7 +77,7 @@ class ReplyPacket {
         $str[] = "<status>$this->status</status>";
         # TODO: Encode to Xml standard
         $str[] = "<message>$this->message_text</message>";
-        $str[] = "<sender name='djseamt-server' version='0.0.0.1' current_timestamp='".time()."' />";  # TODO: version string should be a global variable
+        $str[] = "<sender name='djseamt-server' version='0.0.0.1' current_timestamp='".time()."' module='$this->module' />";  # TODO: version string should be a global variable
         if ( count( $this->infos ) > 0 ) {
             $str[] = "<infos>";
             foreach ( $this->infos as $info_idx => $info_val ) {

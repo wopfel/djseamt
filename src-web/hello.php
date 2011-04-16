@@ -27,6 +27,7 @@
 require( "reply-packet.inc.php" );
 
 $rp = new ReplyPacket;
+$rp->setModule( "hello" );
 
 
 # Some basic checking
