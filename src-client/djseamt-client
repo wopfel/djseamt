@@ -160,6 +160,9 @@ my @sorted_subconfig = sort { $subconfig_priority{$a} <=> $subconfig_priority{$b
 # Stores the subconfig filename which leads to a successful handshake
 my $active_subconfig_name;
 
+# Stores timestamp of the last successful handshake
+my $last_successful_handshake_timestamp;
+
 # Find a suitable subconfig file
 for my $use_subconfig_name ( reverse @sorted_subconfig ) {
 
@@ -173,6 +176,30 @@ for my $use_subconfig_name ( reverse @sorted_subconfig ) {
 }
 
 die "Error: no connection could be established - terminating" unless defined $active_subconfig_name;
+
+
+
+
+################################################################
+##
+##  Main loop
+##
+################################################################
+
+print "Entering main loop...\n";
+
+my $end_program = 0;
+
+while ( $end_program == 0 ) {
+
+    # Is it handshake time?
+    handshake() if time - $last_successful_handshake_timestamp > 10;
+
+    # So we don't eat up the CPU
+    sleep 5;
+
+}
+
 
 
 
@@ -275,6 +302,7 @@ sub handshake {
     print "Successful handshake.\n";
     print Dumper( $answer );
     $active_subconfig_name = $subconfig_name;
+    $last_successful_handshake_timestamp = time;
 
     print "Using subconfig file '$active_subconfig_name' now.\n";
 

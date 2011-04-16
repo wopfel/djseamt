@@ -22,7 +22,8 @@ Client holds more configuration files
 
 Client runs as daemon
 - unless requested by command line option (--foreground or something)
-- regular handshake (specified in master config file, overwritten by subconfig file, overwritten by server option)
+- regular handshake [done]
+- regular handshake frequency specified in master config file, overwritten by subconfig file, overwritten by server option
 - trying to contact server for handshake in an endless loop
 
 
