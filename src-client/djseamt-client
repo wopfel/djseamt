@@ -165,12 +165,16 @@ for my $use_subconfig_name ( reverse @sorted_subconfig ) {
 
     print "Trying subconfig file '$use_subconfig_name' now.\n";
 
-    if ( handshake( $use_subconfig_name ) ) {
+    my $hs_response = handshake( $use_subconfig_name );
+
+    if ( ! defined $hs_response ) {
+        warn "Warning: unsuccessful handshake.\n";
+    } else  {
         print "Successful handshake.\n";
+        my $answer = XMLin( $hs_response );
+        print Dumper( $answer );
         $active_subconfig_name = $use_subconfig_name;
         last;
-    } else  {
-        warn "Warning: unsuccessful handshake.\n";
     }
 
 }
@@ -200,6 +204,8 @@ exit 0;
 ##  Sub: Handshake with server using specified subconfig filename
 ##
 ##  Parameter: subconfig filename as a string
+##  Returns: undef, when no successful connection could be established,
+##           the response from the webserver otherwise
 ##
 ################################################################
 
@@ -244,13 +250,11 @@ sub handshake {
         foreach ( split /\n/, $response->content ) {
             print "  ", $_, "\n";
         }
-        my $answer = XMLin( $response->content );
-        print Dumper( $answer );
         print "Response ends.\n";
-        return 1;
+        return $response->content;
     } else {
         print "Error communicating with server, '$request_url'.\n";
-        return 0;
+        return undef;
     }
 
 }
