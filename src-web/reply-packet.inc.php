@@ -69,7 +69,7 @@ class ReplyPacket {
         $str[] = "<status>$this->status</status>";
         # TODO: Encode to Xml standard
         $str[] = "<message>$this->message_text</message>";
-        $str[] = "<sender typ='djseamt-server' version='0.0.0.1' current_timestamp='".time()."' />";  # TODO: version string should be a global variable
+        $str[] = "<sender name='djseamt-server' version='0.0.0.1' current_timestamp='".time()."' />";  # TODO: version string should be a global variable
         if ( count( $this->infos ) > 0 ) {
             $str[] = "<infos>";
             foreach ( $this->infos as $info_idx => $info_val ) {

@@ -291,7 +291,7 @@ sub handshake {
 
     my $status = $answer->{status};
 
-    print "Received $status answer from webserver '$answer->{sender}->{typ}/$answer->{sender}->{version}'.\n";
+    print "Received $status answer from webserver '$answer->{sender}->{name}/$answer->{sender}->{version}'.\n";
 
     # Don't use this subconfig file when webserver didn't give as an OK message
     if ( $status ne "OK" ) {
