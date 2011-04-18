@@ -118,7 +118,7 @@ print "Using client uuid '$client_id'.\n";
 
 print "Searching for sub configuration files in '$configdir'...\n";
 
-my @subconfig_names;
+my %subconfigs;
 
 opendir DIR, $configdir;
 
@@ -127,35 +127,31 @@ for ( readdir( DIR ) ) {
     # Only accept this pattern: file name begins with 'subconfig-', followed by a 4 digit number
     next unless $_ =~ /^subconfig-\d{4}/;
 
-    push @subconfig_names, $_;
+    my $sub_cfg = new Config::IniFiles( -file => "$configdir/$_" );
+
+    if ( ! defined $sub_cfg ) { warn "Error loading subconfig file '$_'"; next; }
+
+    my $priority = $sub_cfg->val( 'subconfig', 'priority' );
+
+    print "Found subconfig file '$_', priority $priority.\n";
+
+    # Ignore subconfig files with priority = 0
+    next unless $priority > 0;
+
+    $subconfigs{ $_ }  = {
+                             added                      => time,
+                             last_connection_try        => 0,
+                             last_successful_connection => 0,
+                             priority                   => $priority,
+                         };
 
 }
 
 closedir DIR;
 
-print "Found ", scalar(@subconfig_names), " subconfig files.\n";
+print "Found ", scalar(keys %subconfigs), " subconfig files.\n";
 
-die "Need at least one subconfig file to proceed" unless scalar @subconfig_names >= 1;
-
-my %subconfig_priority;
-
-for my $subname ( @subconfig_names ) {
-
-    my $sub_cfg = new Config::IniFiles( -file => "$configdir/$subname" );
-
-    if ( ! defined $sub_cfg ) { warn "Error loading subconfig file '$subname'"; next; }
-
-    my $priority = $sub_cfg->val( 'subconfig', 'priority' );
-
-    print "Using subconfig file '$subname', priority $priority.\n";
-
-    # Ignore subconfig files with priority = 0
-    $subconfig_priority{$subname} = $priority if $priority > 0;
-
-}
-
-# The item with the highest value in priority is at the end of the array
-my @sorted_subconfig = sort { $subconfig_priority{$a} <=> $subconfig_priority{$b} } keys %subconfig_priority;
+die "Need at least one subconfig file to proceed" unless scalar keys %subconfigs >= 1;
 
 # Stores the subconfig filename which leads to a successful handshake
 my $active_subconfig_name;
@@ -163,10 +159,24 @@ my $active_subconfig_name;
 # Stores timestamp of the last successful handshake
 my $last_successful_handshake_timestamp;
 
-# Find a suitable subconfig file
-for my $use_subconfig_name ( reverse @sorted_subconfig ) {
+# Find a suitable subconfig file in an endless loop
+while (1) {
+
+    # Sort the subconfigs
+    # Ranking:
+    # - try subconfigs with the oldest last connection try time first (beginning with 0, the initial value)
+    # - try highest priority value first
+    my @sorted_subconfigs = sort { $subconfigs{$b}{last_connection_try} <=> $subconfigs{$a}{last_connection_try}
+                                   or
+                                   $subconfigs{$a}{priority} <=> $subconfigs{$b}{priority}
+                                } keys %subconfigs;
+
+    my $use_subconfig_name = pop @sorted_subconfigs;
 
     print "Trying subconfig file '$use_subconfig_name' now.\n";
+
+    # Remember when we tried a connection with this subconfig file
+    $subconfigs{$use_subconfig_name}{last_connection_try} = time;
 
     # End the loop when the handshake was successful
     handshake( $use_subconfig_name ) and last;
@@ -306,6 +316,10 @@ sub handshake {
         $active_subconfig_name = $subconfig_name;
         print "Using subconfig file '$active_subconfig_name' now.\n";
     }
+
+    # Remember the last successful connection time of this subconfig file
+    # So we can sort on the last successful connection time in the future (new subconfig files during run-time)
+    $subconfigs{$subconfig_name}{last_successful_connection} = time;
 
     return 1;
 
