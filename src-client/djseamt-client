@@ -244,7 +244,7 @@ sub handshake {
 
     my $sub_cfg = new Config::IniFiles( -file => "$configdir/$subconfig_name" );
 
-    if ( ! defined $sub_cfg ) { warn "Error loading subconfig file '$subconfig_name'"; return 0; }
+    if ( ! defined $sub_cfg ) { warn "Error loading subconfig file '$subconfig_name'"; return undef; }
 
     my %postcontent;
     $postcontent{'id'} = $client_id;
