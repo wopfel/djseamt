@@ -312,10 +312,15 @@ sub handshake {
     print Dumper( $answer );
     $last_successful_handshake_timestamp = time;
 
-    if ( $subconfig_name ne $active_subconfig_name ) {
-        $active_subconfig_name = $subconfig_name;
-        print "Using subconfig file '$active_subconfig_name' now.\n";
+    # Is this a new/other subconfig now?
+    if ( ! defined $active_subconfig_name ) {
+        print "Using subconfig file '$subconfig_name' now.\n";
+    } elsif ( $subconfig_name ne $active_subconfig_name ) {
+        print "Using subconfig file '$subconfig_name' instead of '$active_subconfig_name' now.\n";
     }
+
+    # We're using this subconfig file as active subconfig file
+    $active_subconfig_name = $subconfig_name;
 
     # Remember the last successful connection time of this subconfig file
     # So we can sort on the last successful connection time in the future (new subconfig files during run-time)
